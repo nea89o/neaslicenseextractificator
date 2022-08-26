@@ -11,10 +11,10 @@ pluginManagement {
     repositories {
         maven("https://jitpack.io")
     }
-    resolutionStrateg {
+    resolutionStrategy {
         eachPlugin {
             when (requested.id.id) {
-                "moe.nea.licenseextractificator " -> "com.github.romangraef:licenseextractificator:${requested.version}"
+                "moe.nea.licenseextractificator " -> "com.github.romangraef:neaslicenseextractificator:${requested.version}"
             }
         }
     }
