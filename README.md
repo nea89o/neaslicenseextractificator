@@ -9,16 +9,21 @@
 ```kts
 pluginManagement {
     repositories {
-        maven("https://jitpack.io")
+        maven {
+            name = "jitpack"
+            url = uri("https://jitpack.io")
+        }
+        gradlePluginPortal()
     }
     resolutionStrategy {
         eachPlugin {
             when (requested.id.id) {
-                "moe.nea.licenseextractificator " -> "com.github.romangraef:neaslicenseextractificator:${requested.version}"
+                "moe.nea.licenseextractificator" -> useModule("com.github.romangraef:neaslicenseextractificator:${requested.version}")
             }
         }
     }
 }
+
 ```
 
 `build.gradle.kts`:
