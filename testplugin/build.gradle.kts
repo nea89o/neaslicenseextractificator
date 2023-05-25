@@ -1,5 +1,5 @@
-import moe.nea.licenseextractificator.TextLicenseFormatter
 import moe.nea.licenseextractificator.LicenseDiscoveryTask
+import moe.nea.licenseextractificator.TextLicenseFormatter
 
 plugins {
     id("moe.nea.licenseextractificator") version "0.0.1"
@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains:annotations:23.0.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 }
 
 licensing {
@@ -26,6 +27,18 @@ licensing {
             webPresence = "https://not.jetbrains.com"
         }
         developer("Some other person")
+    }
+    match {
+        if (group.startsWith("com."))
+            useLicense {
+                name = "Gson"
+                description =
+                    "Gson is a Java library that can be used to convert Java Objects into their JSON representation. It can also be used to convert a JSON string to an equivalent Java object."
+                spdxLicense.`Apache-2-0`()
+                developer("Google People") {
+                    webPresence = "https://google.com"
+                }
+            }
     }
     solo {
         name = "Some other dependency not captured by maven"

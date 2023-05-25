@@ -13,12 +13,7 @@ import org.gradle.api.artifacts.result.UnresolvedArtifactResult
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.the
+import org.gradle.api.tasks.*
 import org.gradle.maven.MavenModule
 import org.gradle.maven.MavenPomArtifact
 import javax.inject.Inject
@@ -52,7 +47,8 @@ abstract class LicenseDiscoveryTask @Inject constructor(@Nested  val extension: 
         val resolvedLicenses = mutableMapOf<ComponentIdentifier, ProjectLicensing>()
         val extras = extension.extras.get()
         val overrides = extras.filterIsInstance<LicenseExtra.ModuleExtra>()
-        for (comp in componentIdentifiers) {
+        val dynamicOverrides = extras.filterIsInstance<LicenseExtra.Matcher>()
+        outer@for (comp in componentIdentifiers) {
             val componentIdentifier = comp.componentIdentifier
             if (componentIdentifier is ModuleComponentIdentifier) {
                 val potentialOverrides =
@@ -69,6 +65,17 @@ abstract class LicenseDiscoveryTask @Inject constructor(@Nested  val extension: 
                         resolvedLicenses[comp.componentIdentifier] = potentialOverrides[0].licensing
                         continue
                     }
+                }
+
+                for ((matcher) in dynamicOverrides) {
+                    val context = LicenseMatcher.Context(
+                        componentIdentifier.group,
+                        componentIdentifier.module,
+                        componentIdentifier.version
+                    )
+                    val licensing = matcher.testMatch(context) ?: continue
+                    resolvedLicenses[comp.componentIdentifier] = licensing
+                    continue@outer
                 }
             }
             val resolutionResult =
