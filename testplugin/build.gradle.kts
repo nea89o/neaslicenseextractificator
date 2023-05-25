@@ -50,7 +50,7 @@ licensing {
     }
 }
 
-val licenseTask = tasks.named("license", LicenseDiscoveryTask::class) {
+val licenseTask = tasks.named("scanLicenses", LicenseDiscoveryTask::class) {
     scanConfiguration(project.configurations.compileClasspath.get())
     outputFile.set(file("$buildDir/LICENSES.txt"))
     licenseFormatter.set(TextLicenseFormatter())
